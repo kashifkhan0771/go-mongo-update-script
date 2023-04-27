@@ -176,21 +176,21 @@ func main() {
 	var totalMatched, totalModified int
 
 	// Loop through each record and update the corresponding document in the collection
-	for _, r := range records {
+	for _, record := range records {
 		// filter documents based on name
-		filter := bson.M{"name": r.Name}
+		filter := bson.M{"name": record.Name}
 
 		if !findAndValidate(client, ctx, DatabaseName, CollectionName, filter, nil) {
 			fmt.Printf("Skipping update for document with filter %s, because total number of matched documents "+
-				"is greater then max limit of match", r.Name)
+				"is greater then max limit of match", record.Name)
 		}
 
 		// update the required attributes
-		update := bson.M{"$set": bson.M{Description: r.Description}}
+		update := bson.M{"$set": bson.M{Description: record.Description}}
 
 		updated, updateErr := updateOne(client, ctx, DatabaseName, CollectionName, filter, update)
 		if updateErr != nil {
-			log.Fatalf("Failed to update document: %s", r.Name)
+			log.Fatalf("Failed to update document: %s", record.Name)
 		}
 
 		// update total matched and modified count
@@ -200,7 +200,7 @@ func main() {
 		}
 
 		fmt.Printf("-> Matched %d and Updated %d document with filter %s\n",
-			updated.MatchedCount, updated.ModifiedCount, r.Name)
+			updated.MatchedCount, updated.ModifiedCount, record.Name)
 	}
 
 	fmt.Printf("Result: Successfully Matched %d and Updated %d documents", totalMatched, totalModified)
