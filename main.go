@@ -25,6 +25,9 @@ const (
 
 	// MaxMatchLimit - is the max limit for matched document
 	MaxMatchLimit = 1
+
+	// Timeout - secure your database connection and will disconnect after timeout pass
+	Timeout = 150
 )
 
 // Record - hold the JSON file schema
@@ -82,7 +85,7 @@ func connect(uri string) (*mongo.Client, context.Context,
 	// ctx will be used to set deadline for process, here
 	// deadline will of 30 seconds.
 	ctx, cancel := context.WithTimeout(context.Background(),
-		30*time.Second)
+		150*time.Second)
 
 	// mongo.Connect return mongo.Client method
 	client, err := mongo.Connect(ctx, options.Client().ApplyURI(uri))
@@ -182,7 +185,7 @@ func main() {
 
 		if !findAndValidate(client, ctx, DatabaseName, CollectionName, filter, nil) {
 			fmt.Printf("Skipping update for document with filter %s, because total number of matched documents "+
-				"is greater then max limit of match", record.Name)
+				"is greater then max limit of match\n", record.Name)
 		}
 
 		// update the required attributes
